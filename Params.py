@@ -1,5 +1,6 @@
 import argparse
 
+
 def ParseArgs():
     parser = argparse.ArgumentParser(description='Model Params')
 
@@ -25,7 +26,7 @@ def ParseArgs():
     # =========================
     # Dataset
     # =========================
-    parser.add_argument('--data', default='yelp', type=str, help='dataset name')
+    parser.add_argument('--data', default='lastfm', type=str)
 
     # =========================
     # 🔥 Self-Supervised Learning
@@ -40,12 +41,18 @@ def ParseArgs():
     parser.add_argument('--seed', default=421, type=int, help='random seed')
 
     # =========================
-    # 🔥 NEW (IMPORTANT FOR FUTURE)
+    # 🔥 Extra Features
     # =========================
     parser.add_argument('--early_stop', default=5, type=int, help='early stopping patience')
     parser.add_argument('--dropout', default=0.2, type=float, help='dropout rate')
 
-    return parser.parse_args()
+    # =========================
+    # 🔥 IMPORTANT FIX (FastAPI / Uvicorn compatibility)
+    # =========================
+    args, unknown = parser.parse_known_args()
+
+    return args
 
 
+# Global args
 args = ParseArgs()

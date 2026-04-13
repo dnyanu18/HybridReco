@@ -53,7 +53,6 @@ class Coach:
 
             self.opt.zero_grad()
 
-            # ✅ FIXED CALL (REMOVED None)
             loss = self.model.total_loss(users, pos, neg, adj, user_seq_map)
 
             loss.backward()
@@ -80,7 +79,6 @@ class Coach:
         num = len(tstLoader.dataset)
 
         with torch.no_grad():
-            # ✅ Correct forward call
             user_emb, item_emb = self.model(adj, user_seq_map)
 
             for users, trnMask in tstLoader:
@@ -140,7 +138,7 @@ class Coach:
         return allRecall, allNdcg
 
     # =========================
-    # RUN
+    # RUN (🔥 FINAL FIX)
     # =========================
     def run(self):
         best_recall = 0
@@ -150,11 +148,15 @@ class Coach:
 
             print(f"\nEpoch {ep}/{args.epoch} | Train Loss: {train_loss:.4f}")
 
-            # Always test
             res = self.testEpoch()
 
             print(f"Recall: {res['Recall']:.6f}, NDCG: {res['NDCG']:.6f}")
 
+            # 🔥 ALWAYS SAVE MODEL (SAFE)
+            torch.save(self.model.state_dict(), "best_model.pth")
+            print("💾 Model Saved!")
+
+            # 🔥 BEST TRACKING (OPTIONAL)
             if res['Recall'] > best_recall:
                 best_recall = res['Recall']
                 print("🔥 New Best Recall!")
